@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    val sqlite_version = "2.5.2"
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -51,4 +52,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("androidx.sqlite:sqlite-ktx:${sqlite_version}")
 }
