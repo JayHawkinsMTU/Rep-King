@@ -6,19 +6,92 @@ import android.database.sqlite.SQLiteOpenHelper
 
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-    override fun onCreate(db: SQLiteDatabase?) {
+    override fun onCreate(db: SQLiteDatabase) {
+        configureDatabase(db)
+        createTables(db)
+        populateDatabase(db)
         TODO("Not yet implemented")
     }
 
     override fun onUpgrade(
-        db: SQLiteDatabase?,
+        db: SQLiteDatabase,
         oldVersion: Int,
         newVersion: Int
     ) {
         TODO("Not yet implemented")
     }
 
-    private fun createTables(db: SQLiteDatabase?) {
+    /**
+     * Populates database with universal initial data such as the dev users,
+     * exercises, muscle groups, but not the actual user data.
+     *
+     * @property db The database to populate
+     */
+    private fun populateDatabase(db: SQLiteDatabase) {
+        val devUserId = "dev0-jay"
+        // Dev users for initial exercises
+        val populateUsers = """
+            INSERT INTO users (user_id) VALUES (${devUserId})
+        """.trimIndent()
+        db.execSQL(populateUsers)
+
+        val populateUserNames = """
+            INSERT INTO user_names (user_name_id, user_id, name)
+                VALUES (${devUserId}, ${devUserId}, "Jay")
+        """.trimIndent()
+        db.execSQL(populateUserNames)
+
+        val populateMuscleGroups = """
+            INSERT INTO muscle_groups (muscle_group_name)
+                VALUES ("biceps"), ("calves"), ("chest"), ("core"), ("forearms"),
+                ("glutes"), ("hamstrings"), ("hips"), ("lats"), ("lower-back"),
+                ("shoulders"), ("quads"), ("traps"), ("triceps")
+        """.trimIndent()
+        db.execSQL(populateMuscleGroups)
+
+        // TODO: increase initial exercises set once stable
+        val populateExercises = """
+            INSERT INTO exercises (exercise_name, created_by_user_id, is_isometric)
+                VALUES ("flat-barbell-bench-press", ${devUserId}, 0),
+                ("cable-curls", ${devUserId}, 0),
+                ("calf-raises", ${devUserId}, 0),
+                ("dumbbell-flyes", ${devUserId}, 0),
+                ("cable-crunch", ${devUserId}, 0),
+                ("plank", ${devUserId}, 1),
+                ("dumbbell-wrist-extensions", ${devUserId}, 0),
+                ("barbell-hip-thrusts", ${devUserId}, 0),
+                ("hamstring-curl-machine", ${devUserId}, 0),
+                ("hip-induction-machine", ${devUserId}, 0),
+                ("cable-lat-pull-downs", ${devUserId}, 0),
+                ("lower-back-extension-machine", ${devUserId}, 0),
+                ("dumbbell-shoulder-press", ${devUserId}, 0),
+                ("leg-extension-machine", ${devUserId}, 0),
+                ("dumbbell-shrugs", ${devUserId}, 0),
+                ("rope-triceps-pushdown", ${devUserId}, 0)
+        """.trimIndent()
+        db.execSQL(populateExercises)
+
+        val populateExerciseWorksGroup = """
+            INSERT INTO exercise_works_group (exercise_name, created_by_user_id, muscle_group_name)
+                VALUES (flat-barbell-bench-press, 
+        """.trimIndent()
+    }
+
+    /**
+     * Configures database rules
+     *
+     * @property db The database to configure
+     */
+    private fun configureDatabase(db: SQLiteDatabase) {
+        db.execSQL("PRAGMA foreign_keys = ON")
+    }
+
+    /**
+     * Creates all tables for the database
+     *
+     * @property db The database to make tables for
+     */
+    private fun createTables(db: SQLiteDatabase) {
         // GUID stored as a hyphenated string
         // User is an entity
         val createUsersTable = """
@@ -26,7 +99,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 user_id VARCHAR(36) PRIMARY KEY NOT NULL
             )
         """.trimIndent()
-        db?.execSQL(createUsersTable)
+        db.execSQL(createUsersTable)
 
         // Name of user stored using "Mutable Property" pattern
         val createUserNamesTable = """
@@ -43,14 +116,14 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     ON DELETE CASCADE
             )
         """.trimIndent()
-        db?.execSQL(createUserNamesTable)
+        db.execSQL(createUserNamesTable)
 
         val createMuscleGroupsTable = """
             CREATE TABLE muscle_groups(
                 muscle_group_name VARCHAR(16) PRIMARY KEY NOT NULL
             )
         """.trimIndent()
-        db?.execSQL(createMuscleGroupsTable)
+        db.execSQL(createMuscleGroupsTable)
 
         val createExerciseTable = """
             CREATE TABLE exercises(
@@ -63,7 +136,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     ON DELETE CASCADE
             )
         """.trimIndent()
-        db?.execSQL(createExerciseTable)
+        db.execSQL(createExerciseTable)
 
         val createExerciseDeletionsTable = """
             CREATE TABLE exercises(
@@ -75,7 +148,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     ON DELETE CASCADE
             )
         """.trimIndent()
-        db?.execSQL(createExerciseDeletionsTable)
+        db.execSQL(createExerciseDeletionsTable)
 
         val createExerciseWorksGroupTable = """
             CREATE TABLE exercise_works_group(
@@ -92,7 +165,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 REFERENCES muscle_groups(muscle_group_name)
             )
         """.trimIndent()
-        db?.execSQL((createExerciseWorksGroupTable))
+        db.execSQL((createExerciseWorksGroupTable))
 
         val createWorkingSetsTable = """
             CREATE TABLE working_sets(
@@ -111,7 +184,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 REFERENCES exercises(exercise_name, created_by_user_id)
             )
         """.trimIndent()
-        db?.execSQL((createWorkingSetsTable))
+        db.execSQL((createWorkingSetsTable))
 
         val createWorkingSetDeletionsTable = """
             CREATE TABLE working_set_deletions(
@@ -125,7 +198,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     ON DELETE CASCADE
             )
         """.trimIndent()
-        db?.execSQL((createWorkingSetDeletionsTable))
+        db.execSQL((createWorkingSetDeletionsTable))
 
         val createExerciseNotesTable = """
             CREATE TABLE exercise_notes(
@@ -140,7 +213,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 REFERENCES exercises(exercise_name, created_by_user_id)
             )
         """.trimIndent()
-        db?.execSQL(createExerciseNotesTable)
+        db.execSQL(createExerciseNotesTable)
 
         // shortest kotlin variable name
         val createWorkingSetsPerMuscleGroupPerWeekTargetsTable = """
@@ -158,7 +231,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 REFERENCES working_sets_per_muscle_group_per_week_targets(target_id)
             )
         """.trimIndent()
-        db?.execSQL(createWorkingSetsPerMuscleGroupPerWeekTargetsTable)
+        db.execSQL(createWorkingSetsPerMuscleGroupPerWeekTargetsTable)
     }
 
     companion object {
