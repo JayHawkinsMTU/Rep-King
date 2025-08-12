@@ -1,3 +1,15 @@
+PRAGMA foreign_keys = OFF;
+
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS user_names;
+DROP TABLE IF EXISTS muscle_groups;
+DROP TABLE IF EXISTS exercises;
+DROP TABLE IF EXISTS exercise_works_group;
+DROP TABLE IF EXISTS working_sets;
+DROP TABLE IF EXISTS working_set_deletions;
+DROP TABLE IF EXISTS exercise_notes;
+DROP TABLE IF EXISTS working_sets_per_muscle_group_per_week_targets;
+
 CREATE TABLE users(
     user_id VARCHAR(36) PRIMARY KEY NOT NULL
 );
@@ -51,11 +63,11 @@ CREATE TABLE working_sets(
     weight REAL NOT NULL DEFAULT 0,
     reps INT DEFAULT NULL,
     time TEXT DEFAULT NULL,
-    PRIMARY KEY (timestamp, user_id, exercise_name, created_by_user_id),
+    PRIMARY KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id),
     FOREIGN KEY (user_id)
     REFERENCES users(user_id)
         ON DELETE CASCADE,
-    FOREIGN KEY (exercise_name, created_by_user_id)
+    FOREIGN KEY (exercise_name, exercise_created_by_user_id)
     REFERENCES exercises(exercise_name, created_by_user_id)
 );
 
@@ -64,9 +76,9 @@ CREATE TABLE working_set_deletions(
     user_id VARCHAR(36) NOT NULL,
     exercise_name VARCHAR(50) NOT NULL,
     exercise_created_by_user_id VARCHAR(36) NOT NULL,
-    PRIMARY KEY (timestamp, user_id, exercise_name, created_by_user_id),
-    FOREIGN KEY (timestamp, user_id, exercise_name, created_by_user_id)
-    REFERENCES working_sets(timestamp, user_id, exercise_name, created_by_user_id)
+    PRIMARY KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id),
+    FOREIGN KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id)
+    REFERENCES working_sets(timestamp, user_id, exercise_name, exercise_created_by_user_id)
         ON DELETE CASCADE
 );
 

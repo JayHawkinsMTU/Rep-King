@@ -177,11 +177,11 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 weight REAL NOT NULL DEFAULT 0,
                 reps INT DEFAULT NULL,
                 time TEXT DEFAULT NULL,
-                PRIMARY KEY (timestamp, user_id, exercise_name, created_by_user_id),
+                PRIMARY KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id),
                 FOREIGN KEY (user_id)
                 REFERENCES users(user_id)
                     ON DELETE CASCADE,
-                FOREIGN KEY (exercise_name, created_by_user_id)
+                FOREIGN KEY (exercise_name, exercise_created_by_user_id)
                 REFERENCES exercises(exercise_name, created_by_user_id)
             )
         """.trimIndent()
@@ -193,8 +193,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 user_id VARCHAR(36) NOT NULL,
                 exercise_name VARCHAR(50) NOT NULL,
                 exercise_created_by_user_id VARCHAR(36) NOT NULL,
-                PRIMARY KEY (timestamp, user_id, exercise_name, created_by_user_id),
-                FOREIGN KEY (timestamp, user_id, exercise_name, created_by_user_id)
+                PRIMARY KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id),
+                FOREIGN KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id)
                 REFERENCES working_sets(timestamp, user_id, exercise_name, created_by_user_id)
                     ON DELETE CASCADE
             )
