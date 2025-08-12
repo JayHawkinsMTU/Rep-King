@@ -4,19 +4,16 @@ import dev.jayhawkins.repking.database.exceptions.UninitializedMutablePropertyEx
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import dev.jayhawkins.repking.database.exceptions.MutablePropertyConflictException
+import org.intellij.lang.annotations.Language
 
 class UserView : DatabaseView {
     var usernameCandidates: Array<String?> = emptyArray()
-    var usernameId: String = "NONE"
-    var userId: String = "NONE"
+    var usernameId: String = ""
+    var userId: String = ""
 
-    override val viewQuery: String = """
-        SELECT u.user_id, name, user_name_id
-        FROM users u LEFT JOIN user_names un ON u.user_id = un.user_id
-        WHERE u.user_id = ?
-            AND NOT EXISTS (SELECT *
-                FROM user_names
-                WHERE user_names.prior_user_name_id = un.user_name_id)
+    @Language("RoomSql") override val viewQuery: String = """
+        $GENERIC_VIEW_QUERY
+        AND u.user_id = ?
     """.trimIndent()
 
     constructor(userId: String, db: SQLiteDatabase) {
@@ -45,5 +42,15 @@ class UserView : DatabaseView {
             throw MutablePropertyConflictException(
                 "$userId has two or more username candidates ${usernameCandidates.joinToString(",") }}"
             )
+    }
+
+    companion object {
+        @Language("RoomSql") const val GENERIC_VIEW_QUERY = """
+        SELECT u.user_id, name, user_name_id
+        FROM users u LEFT JOIN user_names un ON u.user_id = un.user_id
+        WHERE NOT EXISTS (SELECT *
+                FROM user_names
+                WHERE user_names.prior_user_name_id = un.user_name_id)
+        """
     }
 }

@@ -1,0 +1,3 @@
+CREATE TABLE users(
+    user_id VARCHAR(36) PRIMARY KEY NOT NULL
+);

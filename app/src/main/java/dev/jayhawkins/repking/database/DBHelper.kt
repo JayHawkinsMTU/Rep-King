@@ -3,6 +3,7 @@ package dev.jayhawkins.repking.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import org.intellij.lang.annotations.Language
 
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -30,18 +31,18 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     private fun populateDatabase(db: SQLiteDatabase) {
         val devUserId = "dev0-jay"
         // Dev users for initial exercises
-        val populateUsers = """
+        @Language("RoomSql") val populateUsers = """
             INSERT INTO users (user_id) VALUES (${devUserId})
         """.trimIndent()
         db.execSQL(populateUsers)
 
-        val populateUserNames = """
+        @Language("RoomSql") val populateUserNames = """
             INSERT INTO user_names (user_name_id, user_id, name)
                 VALUES (${devUserId}, ${devUserId}, "Jay")
         """.trimIndent()
         db.execSQL(populateUserNames)
 
-        val populateMuscleGroups = """
+        @Language("RoomSql") val populateMuscleGroups = """
             INSERT INTO muscle_groups (muscle_group_name)
                 VALUES ("biceps"), ("calves"), ("chest"), ("core"), ("forearms"),
                 ("glutes"), ("hamstrings"), ("hips"), ("lats"), ("lower-back"),
@@ -50,7 +51,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         db.execSQL(populateMuscleGroups)
 
         // TODO: increase initial exercises set once stable
-        val populateExercises = """
+        @Language("RoomSql") val populateExercises = """
             INSERT INTO exercises (exercise_name, created_by_user_id, is_isometric)
                 VALUES ("flat-barbell-bench-press", ${devUserId}, 0),
                 ("cable-curls", ${devUserId}, 0),
@@ -94,7 +95,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     private fun createTables(db: SQLiteDatabase) {
         // GUID stored as a hyphenated string
         // User is an entity
-        val createUsersTable = """
+        @Language("RoomSql") val createUsersTable = """
             CREATE TABLE users(
                 user_id VARCHAR(36) PRIMARY KEY NOT NULL
             )
@@ -102,7 +103,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         db.execSQL(createUsersTable)
 
         // Name of user stored using "Mutable Property" pattern
-        val createUserNamesTable = """
+        @Language("RoomSql") val createUserNamesTable = """
             CREATE TABLE user_names(
                 user_name_id VARCHAR(36) PRIMARY KEY NOT NULL,
                 prior_user_name_id VARCHAR(36),
@@ -118,14 +119,14 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         """.trimIndent()
         db.execSQL(createUserNamesTable)
 
-        val createMuscleGroupsTable = """
+        @Language("RoomSql") val createMuscleGroupsTable = """
             CREATE TABLE muscle_groups(
                 muscle_group_name VARCHAR(16) PRIMARY KEY NOT NULL
             )
         """.trimIndent()
         db.execSQL(createMuscleGroupsTable)
 
-        val createExerciseTable = """
+        @Language("RoomSql") val createExerciseTable = """
             CREATE TABLE exercises(
                 exercise_name VARCHAR(50) NOT NULL,
                 created_by_user_id VARCHAR(36) NOT NULL,
@@ -138,7 +139,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         """.trimIndent()
         db.execSQL(createExerciseTable)
 
-        val createExerciseDeletionsTable = """
+        @Language("RoomSql") val createExerciseDeletionsTable = """
             CREATE TABLE exercises(
                 exercise_name VARCHAR(50) NOT NULL,
                 created_by_user_id VARCHAR(36) NOT NULL,
@@ -150,7 +151,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         """.trimIndent()
         db.execSQL(createExerciseDeletionsTable)
 
-        val createExerciseWorksGroupTable = """
+        @Language("RoomSql") val createExerciseWorksGroupTable = """
             CREATE TABLE exercise_works_group(
                 exercise_name VARCHAR(50) NOT NULL,
                 created_by_user_id VARCHAR(36) NOT NULL,
@@ -167,7 +168,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         """.trimIndent()
         db.execSQL((createExerciseWorksGroupTable))
 
-        val createWorkingSetsTable = """
+        @Language("RoomSql") val createWorkingSetsTable = """
             CREATE TABLE working_sets(
                 timestamp VARCHAR(25) NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 user_id VARCHAR(36) NOT NULL,
@@ -186,7 +187,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         """.trimIndent()
         db.execSQL((createWorkingSetsTable))
 
-        val createWorkingSetDeletionsTable = """
+        @Language("RoomSql") val createWorkingSetDeletionsTable = """
             CREATE TABLE working_set_deletions(
                 timestamp VARCHAR(25) NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 user_id VARCHAR(36) NOT NULL,
@@ -200,7 +201,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         """.trimIndent()
         db.execSQL((createWorkingSetDeletionsTable))
 
-        val createExerciseNotesTable = """
+        @Language("RoomSql") val createExerciseNotesTable = """
             CREATE TABLE exercise_notes(
                 user_id VARCHAR(36) NOT NULL,
                 exercise_name VARCHAR(50) NOT NULL,
@@ -216,7 +217,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         db.execSQL(createExerciseNotesTable)
 
         // shortest kotlin variable name
-        val createWorkingSetsPerMuscleGroupPerWeekTargetsTable = """
+        @Language("RoomSql") val createWorkingSetsPerMuscleGroupPerWeekTargetsTable = """
             CREATE TABLE working_sets_per_muscle_group_per_week_targets(
                 target_id VARCHAR(36) NOT NULL PRIMARY KEY,
                 user_id VARCHAR(36) NOT NULL,
