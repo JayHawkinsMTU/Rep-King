@@ -27,8 +27,9 @@ class ExerciseView : DatabaseView {
             AND e.created_by_user_id = ?
     """.trimIndent()
 
-    constructor(exerciseName: String, createdByUserId: String) {
+    constructor(exerciseName: String, createdByUserId: String, db: SQLiteDatabase) {
         selectionArgs = arrayOf(exerciseName, createdByUserId)
+        execQuery(db)
     }
 
     override fun loadView(cur: Cursor) {
