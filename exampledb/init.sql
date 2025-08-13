@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS user_names;
 DROP TABLE IF EXISTS muscle_groups;
 DROP TABLE IF EXISTS exercises;
+DROP TABLE IF EXISTS exercise_deletions;
 DROP TABLE IF EXISTS exercise_works_group;
 DROP TABLE IF EXISTS working_sets;
 DROP TABLE IF EXISTS working_set_deletions;
@@ -34,22 +35,31 @@ CREATE TABLE muscle_groups(
 CREATE TABLE exercises(
     exercise_name VARCHAR(50) NOT NULL,
     created_by_user_id VARCHAR(36) NOT NULL,
+    timestamp VARCHAR(25) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_isometric INT NOT NULL DEFAULT 0,
-    PRIMARY KEY (exercise_name, created_by_user_id),
+    PRIMARY KEY (exercise_name, created_by_user_id, timestamp),
     FOREIGN KEY (created_by_user_id)
     REFERENCES users(user_id)
         ON DELETE CASCADE
 );
 
+CREATE TABLE exercise_deletions(
+    exercise_name VARCHAR(50) NOT NULL,
+    exercise_timestamp VARCHAR(25) NOT NULL,
+    created_by_user_id VARCHAR(36) NOT NULL,
+    PRIMARY KEY (exercise_name, exercise_timestamp, created_by_user_id),
+    FOREIGN KEY (exercise_name, exercise_timestamp, created_by_user_id)
+    REFERENCES exercises(exercise_name, timestamp, created_by_user_id)
+);
+
 CREATE TABLE exercise_works_group(
     exercise_name VARCHAR(50) NOT NULL,
+    exercise_timestamp VARCHAR(25) NOT NULL,
     created_by_user_id VARCHAR(36) NOT NULL,
     muscle_group_name VARCHAR(16) NOT NULL,
-    PRIMARY KEY (exercise_name, created_by_user_id, muscle_group_name),
-    FOREIGN KEY (exercise_name)
-    REFERENCES exercises(exercise_name),
-    FOREIGN KEY (created_by_user_id)
-    REFERENCES exercises(created_by_user_id)
+    PRIMARY KEY (exercise_name, exercise_timestamp, created_by_user_id, muscle_group_name),
+    FOREIGN KEY (exercise_name, exercise_timestamp, created_by_user_id)
+    REFERENCES exercises(exercise_name, timestamp, created_by_user_id)
         ON DELETE CASCADE,
     FOREIGN KEY (muscle_group_name)
     REFERENCES muscle_groups(muscle_group_name)
@@ -59,39 +69,43 @@ CREATE TABLE working_sets(
     timestamp VARCHAR(25) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id VARCHAR(36) NOT NULL,
     exercise_name VARCHAR(50) NOT NULL,
+    exercise_timestamp VARCHAR(25) NOT NULL,
     exercise_created_by_user_id VARCHAR(36) NOT NULL,
     weight REAL NOT NULL DEFAULT 0,
     reps INT DEFAULT NULL,
     time TEXT DEFAULT NULL,
-    PRIMARY KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id),
+    PRIMARY KEY (timestamp, user_id, exercise_name, exercise_timestamp, exercise_created_by_user_id),
     FOREIGN KEY (user_id)
     REFERENCES users(user_id)
         ON DELETE CASCADE,
-    FOREIGN KEY (exercise_name, exercise_created_by_user_id)
-    REFERENCES exercises(exercise_name, created_by_user_id)
+    FOREIGN KEY (exercise_name, exercise_timestamp, exercise_created_by_user_id)
+    REFERENCES exercises(exercise_name, timestamp, created_by_user_id)
 );
 
 CREATE TABLE working_set_deletions(
     timestamp VARCHAR(25) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id VARCHAR(36) NOT NULL,
     exercise_name VARCHAR(50) NOT NULL,
+    exercise_timestamp VARCHAR(25) NOT NULL,
     exercise_created_by_user_id VARCHAR(36) NOT NULL,
-    PRIMARY KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id),
-    FOREIGN KEY (timestamp, user_id, exercise_name, exercise_created_by_user_id)
-    REFERENCES working_sets(timestamp, user_id, exercise_name, exercise_created_by_user_id)
+    PRIMARY KEY (timestamp, user_id, exercise_name, exercise_timestamp, exercise_created_by_user_id),
+    FOREIGN KEY (timestamp, user_id, exercise_name, exercise_timestamp, exercise_created_by_user_id)
+    REFERENCES working_sets(timestamp, user_id, exercise_name, exercise_timestamp, exercise_created_by_user_id)
         ON DELETE CASCADE
 );
 
 CREATE TABLE exercise_notes(
     user_id VARCHAR(36) NOT NULL,
     exercise_name VARCHAR(50) NOT NULL,
+    exercise_timestamp VARCHAR(25) NOT NULL,
     created_by_user_id VARCHAR(36) NOT NULL,
     exercise_note TEXT,
+    PRIMARY KEY (user_id, exercise_name, exercise_timestamp, created_by_user_id),
     FOREIGN KEY (user_id)
     REFERENCES users(user_id)
         ON DELETE CASCADE,
-    FOREIGN KEY (exercise_name, created_by_user_id)
-    REFERENCES exercises(exercise_name, created_by_user_id)
+    FOREIGN KEY (exercise_name, exercise_timestamp, created_by_user_id)
+    REFERENCES exercises(exercise_name, timestamp, created_by_user_id)
 );
 
 CREATE TABLE working_sets_per_muscle_group_per_week_targets(
