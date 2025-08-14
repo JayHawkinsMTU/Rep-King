@@ -8,7 +8,7 @@ WHERE NOT EXISTS (SELECT *
 
 -- exercise view    
 SELECT e.exercise_name, e.is_isometric, ewg.muscle_group_name, en.exercise_note,
-        name AS created_by_user_name
+        name AS created_by_user
         FROM exercises e LEFT JOIN exercise_works_group ewg ON e.exercise_name = ewg.exercise_name AND
             e.created_by_user_id = ewg.created_by_user_id
             LEFT JOIN exercise_notes en ON e.exercise_name = en.exercise_name AND

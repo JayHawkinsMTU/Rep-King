@@ -12,12 +12,14 @@ class ExerciseView : DatabaseView {
     // TODO: Add timestamp to exercise and exercise deletion table
     @Language("RoomSql") override val viewQuery: String = """
         SELECT e.exercise_name, e.is_isometric, ewg.muscle_group_name, en.exercise_note,
-            un.user_name
+            name AS created_by
         FROM exercises e LEFT JOIN exercise_works_group ewg ON e.exercise_name = ewg.exercise_name AND
             e.created_by_user_id = ewg.created_by_user_id
             LEFT JOIN exercise_notes en ON e.exercise_name = en.exercise_name AND
             e.created_by_user_id = en.created_by_user_id
-            LEFT JOIN (${UserView.GENERIC_VIEW_QUERY}) ON u.user_id = e.created_by_user_id
+            LEFT JOIN (
+                ${UserView.GENERIC_VIEW_QUERY}
+            ) UserSubquery ON UserSubquery.user_id = e.created_by_user_id
         WHERE NOT EXISTS (
             SELECT *
             FROM exercise_deletions ed

@@ -25,3 +25,6 @@ VALUES ("bench-press", "2025-08-09 00:00:00.000", "dev0-jay", "chest"),
     ("squat", "2025-08-09 00:00:00.000", "dev0-jay", "quads"),
     ("squat", "2025-08-09 00:00:00.000", "dev0-jay", "glutes"),
     ("plank", "2025-08-09 00:00:00.000", "dev0-jay", "core");
+
+INSERT INTO exercise_deletions (exercise_name, exercise_timestamp, created_by_user_id)
+    VALUES ("bench-press", "2025-08-09 00:00:00.000", "dev0-jay");
