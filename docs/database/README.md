@@ -27,13 +27,7 @@ not allowed to define their own muscle groups for the sake of UI.
 
 ### Exercises, Users, and Exercise-Works-Group
 
-A single user is created that is attributed to me (Jay) for the initial exercises
-to be attributed to. If you want to contribute an exercise that you deem
-essential to the app, feel free to populate the initial database with another
-user or just attribute it to the existing one. I don't care. Dev users that are
-automatically populated in do not need to follow the GUID constraints but should
-have their `user_id` follow the format `dev{x}-{your-name}` and have only one
-entry in `user_names` corresponding to it with an identical ID.
+Initial data is attributed to the user with id `dev`.
 
 As a biproduct of the table `exercises` being populated, `exercise_works_group`
 is also populated for the initial exercises.

@@ -8,8 +8,9 @@ class ExerciseView : DatabaseView {
     var exerciseName: String = ""
     var createdByUserId: String = ""
     var createdByUserName: String = ""
+    var musclesWorked: List<String> = emptyList()
+    var notes: String = ""
 
-    // TODO: Add timestamp to exercise and exercise deletion table
     @Language("RoomSql") override val viewQuery: String = """
         SELECT e.exercise_name, e.is_isometric, ewg.muscle_group_name, en.exercise_note,
             name AS created_by
@@ -35,6 +36,12 @@ class ExerciseView : DatabaseView {
     }
 
     override fun loadView(cur: Cursor) {
-        TODO("Not yet implemented")
+
+    }
+
+    companion object {
+        val INITIAL_EXERCISES = listOf(
+
+        )
     }
 }

@@ -242,5 +242,6 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     companion object {
         const val DATABASE_NAME = "rk_user.db"
         const val DATABASE_VERSION = 1
+        const val INITIAL_DATA_TIMESTAMP = "2025-08-09 00:00:00.000"
     }
 }

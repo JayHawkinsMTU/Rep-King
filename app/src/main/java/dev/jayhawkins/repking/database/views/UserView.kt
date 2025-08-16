@@ -3,10 +3,16 @@ package dev.jayhawkins.repking.database.views
 import dev.jayhawkins.repking.database.exceptions.UninitializedMutablePropertyException
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import androidx.core.database.getStringOrNull
+import dev.jayhawkins.repking.database.exceptions.EmptyCursorException
 import dev.jayhawkins.repking.database.exceptions.MutablePropertyConflictException
 import org.intellij.lang.annotations.Language
 
+/**
+ * A static view of a user from a SQL query
+ */
 class UserView : DatabaseView {
+    // Length is 1 in most cases. 0 if uninitialized. 2 if conflict.
     var usernameCandidates: Array<String?> = emptyArray()
     var usernameId: String = ""
     var userId: String = ""
@@ -18,13 +24,23 @@ class UserView : DatabaseView {
 
     constructor(userId: String, db: SQLiteDatabase) {
         selectionArgs = arrayOf(userId)
+        this.userId = userId
         execQuery(db)
+    }
+
+    // Use only for constants like DEV_USER
+    private constructor(userId: String, username: String) {
+        usernameCandidates = arrayOf(username)
+        this.userId = userId
     }
 
     override fun loadView(cur: Cursor) {
         val rowCount = cur.count
 
-        if (rowCount == 0 || !cur.moveToFirst())
+        if (!cur.moveToFirst())
+            throw EmptyCursorException("No user with ID: $userId")
+
+        if (cur.getStringOrNull(cur.getColumnIndexOrThrow("name")) == null)
             throw UninitializedMutablePropertyException(
                 "$userId has no attached username. Are they a new user?"
             )
@@ -52,5 +68,7 @@ class UserView : DatabaseView {
                 FROM user_names
                 WHERE user_names.prior_user_name_id = un.user_name_id)
         """
+
+        val DEV_USER = UserView("dev", "Jay")
     }
 }
