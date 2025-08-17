@@ -13,7 +13,8 @@ import org.intellij.lang.annotations.Language
  */
 class UserView : DatabaseView {
     // Length is 1 in most cases. 0 if uninitialized. 2 if conflict.
-    var usernameCandidates: Array<String?> = emptyArray()
+    var usernameCandidates: List<String?> = emptyList()
+    // ID of user name property. Select first on conflict.
     var usernameId: String = ""
     var userId: String = ""
 
@@ -30,7 +31,7 @@ class UserView : DatabaseView {
 
     // Use only for constants like DEV_USER
     private constructor(userId: String, username: String) {
-        usernameCandidates = arrayOf(username)
+        usernameCandidates = mutableListOf(username)
         this.userId = userId
     }
 
@@ -38,7 +39,7 @@ class UserView : DatabaseView {
         val rowCount = cur.count
 
         if (!cur.moveToFirst())
-            throw EmptyCursorException("No user with ID: $userId")
+            throw EmptyCursorException("User with ID \"$userId\" doesn't exist.")
 
         if (cur.getStringOrNull(cur.getColumnIndexOrThrow("name")) == null)
             throw UninitializedMutablePropertyException(
@@ -46,12 +47,13 @@ class UserView : DatabaseView {
             )
 
         // Assign values
-        usernameCandidates = arrayOfNulls(rowCount)
         usernameId = cur.getString(cur.getColumnIndexOrThrow("user_name_id"))
-        userId = cur.getString(cur.getColumnIndexOrThrow("user_id"))
+        val unc = mutableListOf<String>()
         do {
-            usernameCandidates[cur.position] = cur.getString(cur.getColumnIndexOrThrow("name"))
+            unc.add(cur.getString(cur.getColumnIndexOrThrow("name")))
         } while (cur.moveToNext())
+
+        usernameCandidates = unc
 
         // Handle exception last so we can see candidates
         if (rowCount > 1)

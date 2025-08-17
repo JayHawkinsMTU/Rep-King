@@ -24,7 +24,10 @@ abstract class DatabaseView {
     }
 
     /**
-     * Uses query results to apply data to view
+     * Uses query results to apply data to view.
+     *
+     * When applying a column to a list, cast a mutable list to an immutable
+     * list.
      *
      * @property cur Cursor viewing "viewQuery" results
      */
