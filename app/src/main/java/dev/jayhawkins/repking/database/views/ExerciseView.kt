@@ -62,7 +62,9 @@ class ExerciseView : DatabaseView {
 
     companion object {
         val INITIAL_EXERCISES = listOf(
-
+            ExerciseView("Flat Barbell Bench Press", UserView.DEV_USER, listOf(
+                // TODO: fill with muscle group constants
+            )),
         )
     }
 }
