@@ -61,9 +61,127 @@ class ExerciseView : DatabaseView {
     }
 
     companion object {
+        // Store initial exercise names in a JSON friendly format for future i18n
         val INITIAL_EXERCISES = listOf(
-            ExerciseView("Flat Barbell Bench Press", UserView.DEV_USER, listOf(
-                // TODO: fill with muscle group constants
+            ExerciseView("flat-barbell-bench-press", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST, MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("incline-barbell-bench-press", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST, MuscleGroupView.TRICEPS, MuscleGroupView.SHOULDERS
+            )),
+            ExerciseView("flat-dumbbell-bench-press", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST, MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("incline-dumbbell-bench-press", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST, MuscleGroupView.TRICEPS, MuscleGroupView.SHOULDERS
+            )),
+            ExerciseView("barbell-rows", UserView.DEV_USER, listOf(
+                MuscleGroupView.LATS, MuscleGroupView.TRAPS
+            )),
+            ExerciseView("one-arm-dumbbell-rows", UserView.DEV_USER, listOf(
+                MuscleGroupView.LATS, MuscleGroupView.TRAPS
+            )),
+            ExerciseView("pull-ups", UserView.DEV_USER, listOf(
+                MuscleGroupView.LATS, MuscleGroupView.BICEPS
+            )),
+            ExerciseView("dips", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST, MuscleGroupView.TRICEPS, MuscleGroupView.SHOULDERS
+            )),
+            ExerciseView("preacher-curls", UserView.DEV_USER, listOf(
+                MuscleGroupView.BICEPS
+            )),
+            ExerciseView("dumbbell-shoulder-press", UserView.DEV_USER, listOf(
+                MuscleGroupView.SHOULDERS, MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("chin-ups", UserView.DEV_USER, listOf(
+                MuscleGroupView.LATS, MuscleGroupView.TRAPS
+            )),
+            ExerciseView("barbell-back-squat", UserView.DEV_USER, listOf(
+                MuscleGroupView.GLUTES, MuscleGroupView.QUADS
+            )),
+            ExerciseView("deadlift", UserView.DEV_USER, listOf(
+                MuscleGroupView.GLUTES, MuscleGroupView.HAMSTRINGS, MuscleGroupView.LOWER_BACK
+            )),
+            ExerciseView("leg-press", UserView.DEV_USER, listOf(
+                MuscleGroupView.GLUTES, MuscleGroupView.QUADS
+            )),
+            ExerciseView("bulgarian-split-squat", UserView.DEV_USER, listOf(
+                MuscleGroupView.GLUTES, MuscleGroupView.QUADS, MuscleGroupView.HIPS
+            )),
+            ExerciseView("leg-extension", UserView.DEV_USER, listOf(
+                MuscleGroupView.QUADS
+            )),
+            ExerciseView("leg-curl", UserView.DEV_USER, listOf(
+                MuscleGroupView.HAMSTRINGS
+            )),
+            ExerciseView("dumbbell-flyes", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST
+            )),
+            ExerciseView("machine-flyes", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST
+            )),
+            ExerciseView("machine-press", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST, MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("dumbbell-one-arm-skullcrusher", UserView.DEV_USER, listOf(
+                MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("rope-triceps-pushdown", UserView.DEV_USER, listOf(
+                MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("bar-triceps-pushdown", UserView.DEV_USER, listOf(
+                MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("dumbbell-behind-the-back-extensions", UserView.DEV_USER, listOf(
+                MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("seated-machine-dips", UserView.DEV_USER, listOf(
+                MuscleGroupView.CHEST, MuscleGroupView.TRICEPS
+            )),
+            ExerciseView("cable-lat-raise", UserView.DEV_USER, listOf(
+                MuscleGroupView.SHOULDERS
+            )),
+            ExerciseView("dumbbell-lat-raise", UserView.DEV_USER, listOf(
+                MuscleGroupView.SHOULDERS
+            )),
+            ExerciseView("dumbbell-rear-delt-flyes", UserView.DEV_USER, listOf(
+                MuscleGroupView.TRAPS, MuscleGroupView.SHOULDERS
+            )),
+            ExerciseView("cable-lat-pulldowns", UserView.DEV_USER, listOf(
+                MuscleGroupView.LATS,
+            )),
+            ExerciseView("cable-rows", UserView.DEV_USER, listOf(
+                MuscleGroupView.LATS
+            )),
+            ExerciseView("straight-arm-lat-pulldown", UserView.DEV_USER, listOf(
+                MuscleGroupView.LATS
+            )),
+            ExerciseView("dumbbell-shrug", UserView.DEV_USER, listOf(
+                MuscleGroupView.TRAPS
+            )),
+            ExerciseView("barbell-shrug", UserView.DEV_USER, listOf(
+                MuscleGroupView.TRAPS
+            )),
+            ExerciseView("face-pulls", UserView.DEV_USER, listOf(
+                MuscleGroupView.SHOULDERS
+            )),
+            ExerciseView("cable-curls", UserView.DEV_USER, listOf(
+                MuscleGroupView.BICEPS
+            )),
+            ExerciseView("concentration-curls", UserView.DEV_USER, listOf(
+                MuscleGroupView.BICEPS
+            )),
+            ExerciseView("cable-wrist-curls", UserView.DEV_USER, listOf(
+                MuscleGroupView.FOREARMS
+            )),
+            ExerciseView("romanian-deadlifts", UserView.DEV_USER, listOf(
+                MuscleGroupView.GLUTES, MuscleGroupView.LOWER_BACK
+            )),
+            ExerciseView("calf-raises", UserView.DEV_USER, listOf(
+                MuscleGroupView.CALVES
+            )),
+            ExerciseView("barbell-hip-thrust", UserView.DEV_USER, listOf(
+                MuscleGroupView.GLUTES, MuscleGroupView.HAMSTRINGS, MuscleGroupView.QUADS
             )),
         )
     }
