@@ -3,6 +3,8 @@ package dev.jayhawkins.repking.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import dev.jayhawkins.repking.database.views.ExerciseView
+import dev.jayhawkins.repking.database.views.MuscleGroupView
 import org.intellij.lang.annotations.Language
 
 
@@ -50,32 +52,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         """.trimIndent()
         db.execSQL(populateMuscleGroups)
 
-        // TODO: increase initial exercises set once stable
-        @Language("RoomSql") val populateExercises = """
-            INSERT INTO exercises (exercise_name, created_by_user_id, is_isometric)
-                VALUES ("flat-barbell-bench-press", ${devUserId}, 0),
-                ("cable-curls", ${devUserId}, 0),
-                ("calf-raises", ${devUserId}, 0),
-                ("dumbbell-flyes", ${devUserId}, 0),
-                ("cable-crunch", ${devUserId}, 0),
-                ("plank", ${devUserId}, 1),
-                ("dumbbell-wrist-extensions", ${devUserId}, 0),
-                ("barbell-hip-thrusts", ${devUserId}, 0),
-                ("hamstring-curl-machine", ${devUserId}, 0),
-                ("hip-induction-machine", ${devUserId}, 0),
-                ("cable-lat-pull-downs", ${devUserId}, 0),
-                ("lower-back-extension-machine", ${devUserId}, 0),
-                ("dumbbell-shoulder-press", ${devUserId}, 0),
-                ("leg-extension-machine", ${devUserId}, 0),
-                ("dumbbell-shrugs", ${devUserId}, 0),
-                ("rope-triceps-pushdown", ${devUserId}, 0)
-        """.trimIndent()
-        db.execSQL(populateExercises)
+        // Populate initial exercises
+        for (e in ExerciseView.INITIAL_EXERCISES) {
+            for(g in e.musclesWorked) {
 
-        val populateExerciseWorksGroup = """
-            INSERT INTO exercise_works_group (exercise_name, created_by_user_id, muscle_group_name)
-                VALUES (flat-barbell-bench-press, 
-        """.trimIndent()
+            }
+        }
     }
 
     /**

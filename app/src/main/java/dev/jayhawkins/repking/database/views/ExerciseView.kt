@@ -11,6 +11,7 @@ class ExerciseView : DatabaseView {
     var createdByUserId: String = ""
     var createdByUserName: String = ""
     var musclesWorked: List<String> = emptyList()
+    var isIsometric: Boolean = false
     var notes: String = ""
 
     @Language("RoomSql") override val viewQuery: String = """
@@ -39,11 +40,12 @@ class ExerciseView : DatabaseView {
         execQuery(db)
     }
 
-    private constructor(exerciseName: String, user: UserView, musclesWorked: List<String>) {
+    private constructor(exerciseName: String, user: UserView, musclesWorked: List<String>, isIsometric: Boolean = false) {
         this.exerciseName = exerciseName
         this.createdByUserId = user.userId
         this.createdByUserName = user.usernameCandidates.first() ?: ""
         this.musclesWorked = musclesWorked
+        this.isIsometric = isIsometric
     }
 
     override fun loadView(cur: Cursor) {
@@ -61,6 +63,9 @@ class ExerciseView : DatabaseView {
     }
 
     companion object {
+        val INSERT_EXERCISE_QUERY = """
+            INSERT INTO exercises(exercise_name, timestamp, created_by_user_id, is_isometric)
+        """.trimIndent()
         // Store initial exercise names in a JSON friendly format for future i18n
         val INITIAL_EXERCISES = listOf(
             ExerciseView("flat-barbell-bench-press", UserView.DEV_USER, listOf(
@@ -183,6 +188,9 @@ class ExerciseView : DatabaseView {
             ExerciseView("barbell-hip-thrust", UserView.DEV_USER, listOf(
                 MuscleGroupView.GLUTES, MuscleGroupView.HAMSTRINGS, MuscleGroupView.QUADS
             )),
+            ExerciseView("plank", UserView.DEV_USER, listOf(
+                MuscleGroupView.CORE
+            ), true),
         )
     }
 }
