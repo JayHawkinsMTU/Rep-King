@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import dev.jayhawkins.repking.database.views.ExerciseView
 import dev.jayhawkins.repking.database.views.MuscleGroupView
 import org.intellij.lang.annotations.Language
+import java.time.format.DateTimeFormatter
 
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -13,7 +14,6 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         configureDatabase(db)
         createTables(db)
         populateDatabase(db)
-        TODO("Not yet implemented")
     }
 
     override fun onUpgrade(
@@ -22,6 +22,19 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         newVersion: Int
     ) {
         TODO("Not yet implemented")
+    }
+
+    /**
+     * Inserts a custom user exercise into the database
+     *
+     * @param exercise The view of the exercise to insert
+     */
+    fun insert(exercise: ExerciseView) {
+        val db = writableDatabase
+
+        db.execSQL(INSERT_EXERCISE_NO_TIMESTAMP, arrayOf<String>(
+            exercise.exerciseName, exercise.createdByUserId, if(exercise.isIsometric) "1" else "0"
+        ))
     }
 
     /**
@@ -222,6 +235,23 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     }
 
     companion object {
+        val INSERT_EXERCISE = """
+            INSERT INTO exercises(exercise_name, timestamp, created_by_user_id, is_isometric)
+            VALUES (?, ?, ?, ?)
+        """.trimIndent()
+
+        val INSERT_EXERCISE_NO_TIMESTAMP = """
+            INSERT INTO exercises(exercise_name, created_by_user_id, is_isometric)
+            VALUES (?, ?, ?)
+        """.trimIndent()
+
+        val INSERT_EXERCISE_WORKS_GROUP = """
+            INSERT INTO exercise_works_group (exercise_name, exercise_timestamp, created_by_user_id, muscle_group_name)
+            VALUES (?, ?, ?, ?)
+        """.trimIndent()
+
+        // Move in future?
+        val datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
         const val DATABASE_NAME = "rk_user.db"
         const val DATABASE_VERSION = 1
         const val INITIAL_DATA_TIMESTAMP = "2025-08-09 00:00:00.000"

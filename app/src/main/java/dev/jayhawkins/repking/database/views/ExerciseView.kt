@@ -3,8 +3,10 @@ package dev.jayhawkins.repking.database.views
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import androidx.core.database.getStringOrNull
+import dev.jayhawkins.repking.database.DBHelper
 import dev.jayhawkins.repking.database.exceptions.EmptyCursorException
 import org.intellij.lang.annotations.Language
+import java.time.LocalDateTime
 
 class ExerciseView : DatabaseView {
     var exerciseName: String = ""
@@ -12,11 +14,12 @@ class ExerciseView : DatabaseView {
     var createdByUserName: String = ""
     var musclesWorked: List<String> = emptyList()
     var isIsometric: Boolean = false
+    var createdAt: LocalDateTime = LocalDateTime.now()
     var notes: String = ""
 
     @Language("RoomSql") override val viewQuery: String = """
         SELECT e.exercise_name, e.is_isometric, ewg.muscle_group_name, en.exercise_note,
-            name AS created_by
+            name AS created_by_user, e.timestamp
         FROM exercises e LEFT JOIN exercise_works_group ewg ON e.exercise_name = ewg.exercise_name AND
             e.created_by_user_id = ewg.created_by_user_id
             LEFT JOIN exercise_notes en ON e.exercise_name = en.exercise_name AND
@@ -54,18 +57,19 @@ class ExerciseView : DatabaseView {
 
         createdByUserName = cur.getString(cur.getColumnIndexOrThrow("created_by"))
         notes = cur.getStringOrNull(cur.getColumnIndexOrThrow("exercise_note")) ?: ""
+        isIsometric = cur.getInt((cur.getColumnIndexOrThrow("is_isometric"))) == 1
+        createdAt = LocalDateTime.parse(
+            cur.getString(cur.getColumnIndexOrThrow("timestamp")),
+            DBHelper.datetimeFormatter
+        )
         val mw = mutableListOf<String>()
         do {
             mw.add(cur.getString(cur.getColumnIndexOrThrow("muscle_group_name")))
         } while (cur.moveToNext())
-
         musclesWorked = mw
     }
 
     companion object {
-        val INSERT_EXERCISE_QUERY = """
-            INSERT INTO exercises(exercise_name, timestamp, created_by_user_id, is_isometric)
-        """.trimIndent()
         // Store initial exercise names in a JSON friendly format for future i18n
         val INITIAL_EXERCISES = listOf(
             ExerciseView("flat-barbell-bench-press", UserView.DEV_USER, listOf(
