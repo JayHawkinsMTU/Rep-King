@@ -37,6 +37,17 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         ))
     }
 
+    private fun initialInsert(exercise: ExerciseView) {
+        val db = writableDatabase
+
+        db.execSQL(INSERT_EXERCISE, arrayOf<String>(
+            exercise.exerciseName,
+            datetimeFormatter.format(exercise.createdAt),
+            exercise.createdByUserId,
+            if(exercise.isIsometric) "1" else "0"
+        ))
+    }
+
     /**
      * Populates database with universal initial data such as the dev users,
      * exercises, muscle groups, but not the actual user data.
@@ -67,6 +78,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
         // Populate initial exercises
         for (e in ExerciseView.INITIAL_EXERCISES) {
+            initialInsert(e)
             for(g in e.musclesWorked) {
 
             }
